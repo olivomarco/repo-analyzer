@@ -70,5 +70,11 @@
     "plaintext": true,
     "markdown": true,
     "yaml": true
+  },
+  "chat.tools.terminal.autoApprove": {
+    "/^cd /home/marco/hackfest-techconnect && \\.venv/bin/python -m pytest tests/ --cov=src/repo_inspector --cov-report=term-missing 2>&1 \\| tail -40$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
   }
 }
