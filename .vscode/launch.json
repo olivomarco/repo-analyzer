@@ -1,0 +1,76 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: CLI - Fetch",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "copilot_release.cli",
+      "args": ["fetch", "--repo", "microsoft/vscode", "--since", "v1.85.0"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Python: CLI - Generate Dev",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "copilot_release.cli",
+      "args": ["generate", "--audience", "dev"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Python: CLI - Generate Exec",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "copilot_release.cli",
+      "args": ["generate", "--audience", "exec"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Python: CLI - Generate Customer",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "copilot_release.cli",
+      "args": ["generate", "--audience", "customer"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Python: Debug Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Python: Debug Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-v", "tests/"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    }
+  ]
+}

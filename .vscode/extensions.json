@@ -1,0 +1,38 @@
+{
+  "recommendations": [
+    // Python Development
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+
+    // Formatting & Linting
+    "charliermarsh.ruff",
+
+    // Testing
+    "littlefoxteam.vscode-python-test-adapter",
+
+    // GitHub & Copilot
+    "github.copilot",
+    "github.copilot-chat",
+    "github.vscode-pull-request-github",
+
+    // Git
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+
+    // Containers
+    "ms-vscode-remote.remote-containers",
+    "ms-azuretools.vscode-docker",
+
+    // General Productivity
+    "esbenp.prettier-vscode",
+    "redhat.vscode-yaml",
+    "tamasfe.even-better-toml",
+    "usernamehw.errorlens",
+    "gruntfuggly.todo-tree",
+
+    // Markdown
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint"
+  ]
+}
