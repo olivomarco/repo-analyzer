@@ -194,6 +194,18 @@ class TestDetectLanguages:
         langs = cloner_with_dir.detect_languages("docs")
         assert "Markdown" in langs
 
+    def test_detects_dockerfile(self, cloner_with_dir, tmp_path):
+        (tmp_path / "infra").mkdir()
+        (tmp_path / "infra" / "Dockerfile").write_text("FROM python:3.11\n")
+        langs = cloner_with_dir.detect_languages("infra")
+        assert "Docker" in langs
+
+    def test_detects_multiple_languages(self, cloner_with_dir, tmp_path):
+        (tmp_path / "src" / "app.js").write_text("console.log('hi')")
+        langs = cloner_with_dir.detect_languages("src")
+        assert "Python" in langs
+        assert "JavaScript" in langs
+
     def test_nonexistent_dir(self, cloner_with_dir):
         assert cloner_with_dir.detect_languages("nonexistent") == []
 
@@ -220,6 +232,12 @@ class TestDetectDependencyFiles:
         result = cloner_with_dir.detect_dependency_files()
         assert "Cargo.toml" in result
         assert result["Cargo.toml"] == "rust"
+
+    def test_finds_csproj(self, cloner_with_dir, tmp_path):
+        (tmp_path / "MyApp.csproj").write_text("<Project></Project>")
+        result = cloner_with_dir.detect_dependency_files()
+        assert "MyApp.csproj" in result
+        assert result["MyApp.csproj"] == "dotnet"
 
     def test_no_clone_dir(self):
         cloner = RepoCloner()
@@ -261,6 +279,29 @@ class TestParseDependencies:
         deps = cloner_with_dir.parse_dependencies()
         names = [d["name"] for d in deps]
         assert "serde" in names
+
+    def test_parses_pyproject_toml(self, cloner_with_dir, tmp_path):
+        (tmp_path / "pyproject.toml").write_text(
+            '[project]\nname = "myproject"\ndependencies = [\n  "click>=8.0",\n  "httpx>=0.24",\n]\n'
+        )
+        deps = cloner_with_dir.parse_dependencies()
+        names = [d["name"] for d in deps]
+        assert "click" in names or "httpx" in names
+
+    def test_invalid_package_json(self, cloner_with_dir, tmp_path):
+        (tmp_path / "package.json").write_text("not valid json {{{")
+        deps = cloner_with_dir.parse_dependencies()
+        # Should not crash, just skip
+        pkg_deps = [d for d in deps if d.get("ecosystem") == "npm"]
+        assert pkg_deps == []
+
+    def test_requirements_skips_flags(self, cloner_with_dir, tmp_path):
+        (tmp_path / "requirements.txt").write_text("-r base.txt\n-e .\nflask>=2.0\n")
+        deps = cloner_with_dir.parse_dependencies()
+        names = [d["name"] for d in deps]
+        assert "flask" in names
+        # -r and -e lines should be skipped
+        assert "-r" not in names
 
     def test_no_deps_found(self, cloner_with_dir):
         deps = cloner_with_dir.parse_dependencies()
