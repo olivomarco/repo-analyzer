@@ -83,7 +83,7 @@ class HomeScreen(Screen):
                 )
                 yield Label("Repository (owner/repo):", classes="field-label")
                 yield Input(
-                    placeholder="e.g. microsoft/vscode",
+                    placeholder="e.g. excalidraw/excalidraw",
                     id="repo-input",
                 )
                 yield Label("Timeframe:", classes="field-label")
@@ -108,7 +108,7 @@ class HomeScreen(Screen):
 
         repo = repo_input.value.strip()
         if "/" not in repo or len(repo.split("/")) != 2:
-            error_label.update("⚠  Enter a valid owner/repo (e.g. microsoft/vscode)")
+            error_label.update("⚠  Enter a valid owner/repo (e.g. excalidraw/excalidraw)")
             return
 
         owner, repo_name = repo.split("/", 1)

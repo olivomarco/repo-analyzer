@@ -1,11 +1,9 @@
 """Results screen — tabbed view with People / Functional / Code tabs + extended analysis."""
 
-from textual import on
 from textual.app import ComposeResult
-from textual.containers import Horizontal, ScrollableContainer, Vertical, VerticalScroll
+from textual.containers import Vertical, VerticalScroll
 from textual.screen import Screen
 from textual.widgets import (
-    Button,
     DataTable,
     Footer,
     Header,
@@ -16,7 +14,7 @@ from textual.widgets import (
     TabPane,
 )
 
-from repo_inspector.models import CodeFinding, InspectionResult
+from repo_inspector.models import InspectionResult
 
 
 class ResultsScreen(Screen):
@@ -69,11 +67,6 @@ class ResultsScreen(Screen):
     .finding-card.security {
         border: round $error;
     }
-    #issue-btn-row {
-        height: 4;
-        margin: 1 0;
-        align: center middle;
-    }
     #back-btn {
         dock: bottom;
         margin: 1 2;
@@ -83,13 +76,12 @@ class ResultsScreen(Screen):
     BINDINGS = [
         ("q", "quit", "Quit"),
         ("b", "go_back", "Back"),
-        ("i", "create_issue", "Create Issue"),
     ]
 
     def __init__(self, result: InspectionResult, **kwargs) -> None:  # type: ignore[no-untyped-def]
         super().__init__(**kwargs)
         self.result = result
-        self._selected_findings: list[CodeFinding] = []
+
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -276,13 +268,6 @@ class ResultsScreen(Screen):
             if not has_folder_content:
                 yield Markdown(
                     "\n\n_No specific folder-level findings were identified._"
-                )
-
-            with Horizontal(id="issue-btn-row"):
-                yield Button(
-                    "📝  Create Issue from Findings",
-                    id="create-issue-btn",
-                    variant="warning",
                 )
 
     # ── Time Machine tab ──────────────────────────────────────────────────
@@ -614,14 +599,3 @@ class ResultsScreen(Screen):
     def action_go_back(self) -> None:
         self.app.pop_screen()
 
-    def action_create_issue(self) -> None:
-        self._open_issue_screen()
-
-    @on(Button.Pressed, "#create-issue-btn")
-    def on_create_issue_btn(self) -> None:
-        self._open_issue_screen()
-
-    def _open_issue_screen(self) -> None:
-        from repo_inspector.screens.issue import IssueScreen
-
-        self.app.push_screen(IssueScreen(self.result))

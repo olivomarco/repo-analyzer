@@ -57,22 +57,21 @@ class GitHubFetcher:
         if resp.status_code == 403 and "rate limit" in resp.text.lower():
             remaining = resp.headers.get("x-ratelimit-remaining", "0")
             reset = resp.headers.get("x-ratelimit-reset", "")
+            if self._saml_fallback:
+                hint = (
+                    "Running unauthenticated (60 req/hour) due to SAML fallback. "
+                    "Authorize your PAT for this org via SAML SSO to get 5 000 req/hour."
+                )
+            else:
+                hint = (
+                    f"Authenticated rate limit hit (remaining: {remaining}). "
+                    "Wait a few minutes and retry."
+                )
             raise httpx.HTTPStatusError(
-                f"GitHub API rate limit exceeded (remaining: {remaining}). "
-                f"{'Authorize your PAT for this org via SAML SSO, or wait.' if self._saml_fallback else 'Wait and retry.'}",
+                f"GitHub API rate limit exceeded. {hint}",
                 request=resp.request,
                 response=resp,
             )
-        return resp
-
-    async def _post(self, path: str, **kwargs) -> httpx.Response:  # type: ignore[no-untyped-def]
-        """POST with automatic SAML fallback."""
-        client = await self._client_instance()
-        resp = await client.post(path, **kwargs)
-        if resp.status_code == 403 and "SAML" in resp.text:
-            await self._rebuild_client_without_auth()
-            client = await self._client_instance()
-            resp = await client.post(path, **kwargs)
         return resp
 
     @property
@@ -94,21 +93,13 @@ class GitHubFetcher:
         max_pages: int = 10,
     ) -> list[dict]:
         """Fetch all pages from a paginated GitHub endpoint."""
-        client = await self._client_instance()
         params = dict(params or {})
         params.setdefault("per_page", "100")
 
         results: list[dict] = []
         for page in range(1, max_pages + 1):
             params["page"] = str(page)
-            resp = await client.get(path, params=params)
-
-            # Handle SAML-protected orgs: retry without auth
-            if resp.status_code == 403 and "SAML" in resp.text:
-                await self._rebuild_client_without_auth()
-                client = await self._client_instance()
-                resp = await client.get(path, params=params)
-
+            resp = await self._get(path, params=params)
             resp.raise_for_status()
             data = resp.json()
             if not data:
@@ -281,32 +272,12 @@ class GitHubFetcher:
         """Fetch decoded README content."""
         resp = await self._get(
             f"/repos/{owner}/{repo}/readme",
-            headers={**self.headers, "Accept": "application/vnd.github.raw+json"},
+            headers={"Accept": "application/vnd.github.raw+json"},
         )
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
         return resp.text
-
-    # ── Issue creation ────────────────────────────────────────────────────
-
-    async def create_issue(
-        self,
-        owner: str,
-        repo: str,
-        title: str,
-        body: str,
-        labels: Optional[list[str]] = None,
-    ) -> dict:
-        """Create an issue on the repository."""
-        payload: dict = {"title": title, "body": body}
-        if labels:
-            payload["labels"] = labels
-        resp = await self._post(
-            f"/repos/{owner}/{repo}/issues", json=payload
-        )
-        resp.raise_for_status()
-        return resp.json()
 
     # ── Branches ──────────────────────────────────────────────────────────
 

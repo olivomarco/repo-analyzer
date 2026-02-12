@@ -144,22 +144,3 @@ class TestGitHubFetcher:
         await github_fetcher.close()
 
         assert info["description"] == "A test repo"
-
-    @pytest.mark.asyncio
-    @respx.mock
-    async def test_create_issue(self, github_fetcher):
-        respx.post("https://api.github.com/repos/owner/repo/issues").mock(
-            return_value=httpx.Response(
-                201,
-                json={
-                    "number": 99,
-                    "html_url": "https://github.com/owner/repo/issues/99",
-                },
-            )
-        )
-        result = await github_fetcher.create_issue(
-            "owner", "repo", "Test Issue", "Body text", labels=["bug"]
-        )
-        await github_fetcher.close()
-
-        assert result["number"] == 99

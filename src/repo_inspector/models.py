@@ -215,7 +215,7 @@ class InspectionResult(BaseModel):
     functional: FunctionalReport = Field(default_factory=FunctionalReport)
     code: CodeReport = Field(default_factory=CodeReport)
 
-    # Raw data (kept for reference / issue creation)
+    # Raw data (kept for extended analyses)
     commits: list[Commit] = Field(default_factory=list)
     pull_requests: list[PullRequest] = Field(default_factory=list)
     issues: list[Issue] = Field(default_factory=list)

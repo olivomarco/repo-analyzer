@@ -6,7 +6,13 @@
       "type": "debugpy",
       "request": "launch",
       "module": "copilot_release.cli",
-      "args": ["fetch", "--repo", "microsoft/vscode", "--since", "v1.85.0"],
+      "args": [
+        "fetch",
+        "--repo",
+        "excalidraw/excalidraw",
+        "--since",
+        "v1.85.0"
+      ],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "env": {

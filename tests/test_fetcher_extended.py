@@ -31,19 +31,6 @@ class TestSamlFallback:
 
     @pytest.mark.asyncio
     @respx.mock
-    async def test_post_saml_fallback(self, github_fetcher):
-        """Test SAML fallback on POST requests."""
-        route = respx.post("https://api.github.com/repos/owner/repo/issues")
-        route.side_effect = [
-            httpx.Response(403, text="Organization requires SAML authentication"),
-            httpx.Response(201, json={"number": 1, "html_url": "https://github.com/owner/repo/issues/1"}),
-        ]
-        result = await github_fetcher.create_issue("owner", "repo", "Test", "Body")
-        await github_fetcher.close()
-        assert result["number"] == 1
-
-    @pytest.mark.asyncio
-    @respx.mock
     async def test_rate_limit_error(self, github_fetcher):
         """Test that rate limit 403 raises an exception."""
         respx.get("https://api.github.com/repos/owner/repo").mock(
@@ -256,18 +243,6 @@ class TestPagination:
         await github_fetcher.close()
 
         assert len(commits) == 1
-
-
-class TestCreateIssueWithoutLabels:
-    @pytest.mark.asyncio
-    @respx.mock
-    async def test_create_issue_no_labels(self, github_fetcher):
-        respx.post("https://api.github.com/repos/owner/repo/issues").mock(
-            return_value=httpx.Response(201, json={"number": 42, "html_url": "https://github.com/owner/repo/issues/42"})
-        )
-        result = await github_fetcher.create_issue("owner", "repo", "Title", "Body")
-        await github_fetcher.close()
-        assert result["number"] == 42
 
 
 class TestClientLifecycle:

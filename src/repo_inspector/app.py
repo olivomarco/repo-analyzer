@@ -75,15 +75,16 @@ class RepoInspectorApp(App):
                         if has_token:
                             msg = (
                                 "❌ GitHub API rate limit exceeded. "
-                                "If this is a SAML-protected org, authorize "
-                                "your PAT at: github.com/settings/tokens → "
-                                "Configure SSO → Authorize for the org."
+                                "Wait a few minutes and retry. "
+                                "If the error persists, check that your PAT "
+                                "is authorized for this org's SAML SSO at: "
+                                "github.com/settings/tokens → Configure SSO."
                             )
                         else:
                             msg = (
                                 "❌ GitHub API rate limit exceeded "
                                 "(unauthenticated: 60 req/hour). "
-                                "Set GITHUB_TOKEN to get 5000 req/hour."
+                                "Set GITHUB_TOKEN to get 5 000 req/hour."
                             )
                     elif "SAML" in resp_text:
                         msg = (
