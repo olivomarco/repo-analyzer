@@ -14,6 +14,10 @@
 
 **Repo Inspector** analyzes any GitHub repository and provides actionable insights across **people**, **code quality**, **security**, and **team dynamics**. It combines deterministic metrics with LLM-powered intelligence to surface risks, identify knowledge silos, and help teams make better decisions.
 
+<p align="center">
+  <img src="assets/initial_screen.png" alt="Repo Inspector — Initial Screen" width="800">
+</p>
+
 ## ✨ Features
 
 ### Core Analysis
@@ -23,6 +27,16 @@
 | **👥 People**          | Contributor stats (commits, lines, PRs, issues) + LLM-inferred roles, activity judgments, and risk identification |
 | **🏗 Functional**      | Auto-discovers codebase structure with architecture commentary and improvement suggestions                        |
 | **🔒 Code & Security** | Per-folder code quality scoring, refactoring opportunities, and security vulnerability detection                  |
+
+<p align="center">
+  <img src="assets/top_contributors.png" alt="Top Contributors Analysis" width="800">
+  <br><em>People — Top contributors with LLM-inferred roles</em>
+</p>
+
+<p align="center">
+  <img src="assets/security_analysis.png" alt="Code & Security Analysis" width="800">
+  <br><em>Code & Security — Per-folder quality scores and vulnerability detection</em>
+</p>
 
 ### Extended Insights
 
